@@ -163,7 +163,7 @@ install : all
 	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\$(TARGET_LIB)"
 !ENDIF
 	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(INSTALLDIR)\$(TARGET_LIB)"
-	@xcopy /I /Y /Q "$(SRCDIR)\include\z*.h" "$(INSTALLDIR)\include"
+	@xcopy /I /Y /Q "$(SRCDIR)\z*.h" "$(INSTALLDIR)\include"
 !ENDIF
 
 clean:
