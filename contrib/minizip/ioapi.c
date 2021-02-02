@@ -28,6 +28,22 @@
 
 #include "ioapi.h"
 
+#if defined(_CMSC_VERSION)
+/**
+ * CMSC does not provide _ftelli64 function
+ * This is a simple wrapper using I/O _telli64
+ */
+#include <io.h>
+#undef FTELLO_FUNC
+static __int64 cmsc_ftelli64_wrapper(FILE* stream)
+{
+    
+    return _telli64(_fileno(stream));
+}
+
+#define FTELLO_FUNC(stream) cmsc_ftelli64_wrapper(stream)
+#endif
+
 voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc,const void*filename,int mode)
 {
     if (pfilefunc->zfile_func64.zopen64_file != NULL)
