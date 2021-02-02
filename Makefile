@@ -19,6 +19,7 @@ CC = cl.exe
 LN = link.exe
 AR = lib.exe
 RC = rc.exe
+SRCDIR = .
 
 !IF !DEFINED(BUILD_CPU) || "$(BUILD_CPU)" == ""
 !IF DEFINED(VSCMD_ARG_TGT_ARCH)
@@ -46,10 +47,6 @@ WINVER = 0x0601
 CRT_CFLAGS = -MT
 !ELSE
 CRT_CFLAGS = -MD
-!ENDIF
-
-!IF !DEFINED(SRCDIR) || "$(SRCDIR)" == ""
-SRCDIR = .
 !ENDIF
 
 !IF !DEFINED(TARGET_LIB) || "$(TARGET_LIB)" == ""
@@ -137,7 +134,7 @@ $(WORKDIR) :
 {$(SRCDIR)\contrib\masmx64}.asm{$(WORKDIR)}.obj :
 	$(ML) $(AFLAGS) /Fo$@ $<
 
-{$(SRCDIR)\contrib\masmx86}.asm{$(WORKDIR)}.obj:
+{$(SRCDIR)\contrib\masmx86}.asm{$(WORKDIR)}.obj :
 	$(ML) $(AFLAGS) /Fo$@ $<
 
 
