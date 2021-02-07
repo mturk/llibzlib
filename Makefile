@@ -102,7 +102,7 @@ OBJECTS = \
 	$(WORKDIR)\zip.obj
 
 !IF "$(TARGET)" == "dll"
-OBJECTS = $(OBJECTS) $(WORKDIR)\winzlib.res
+OBJECTS = $(OBJECTS) $(WORKDIR)\zlibwapi.res
 !ENDIF
 
 !IF "$(CPU)" == "x64"
@@ -143,7 +143,7 @@ $(WORKDIR) :
 
 $(OUTPUT): $(WORKDIR) $(OBJECTS) $(ASM_OBJECTS)
 !IF "$(TARGET)" == "dll"
-	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) /def:$(SRCDIR)\winzlib.def /pdb:$(BUILDPDB) /out:$(OUTPUT)
+	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) /def:$(SRCDIR)\zlibwapi.def /pdb:$(BUILDPDB) /out:$(OUTPUT)
 !ELSE
 	$(AR) $(ARFLAGS) $(OBJECTS) $(ASM_OBJECTS) /out:$(OUTPUT)
 !ENDIF
