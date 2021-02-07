@@ -167,6 +167,7 @@ install : all
 	@copy /Y "$(SRCDIR)\zconf.h" "$(INSTALLDIR)\include" >NUL
 	@copy /Y "$(SRCDIR)\zlib.h" "$(INSTALLDIR)\include" >NUL
 	@copy /Y "$(SRCDIR)\contrib\minizip\ioapi.h" "$(INSTALLDIR)\include" >NUL
+	@copy /Y "$(SRCDIR)\contrib\minizip\iowin32.h" "$(INSTALLDIR)\include" >NUL
 	@copy /Y "$(SRCDIR)\contrib\minizip\unzip.h" "$(INSTALLDIR)\include" >NUL
 	@copy /Y "$(SRCDIR)\contrib\minizip\zip.h" "$(INSTALLDIR)\include" >NUL
 !ENDIF
