@@ -17,8 +17,8 @@
 
 #define ZLIB_VERSION_CSV     1,2,11
 #define ZLIB_VERSION_STR    "1.2.11"
-#define ZLIB_BUILD_VERSION  "-1"
-#define ZLIB_WINAPI_NAME    "libzlibwapi-1"
+#define ZLIB_BUILD_VERSION  "_1"
+#define ZLIB_DLL_LIBNAME    "libzlibwapi-1"
 
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION     ZLIB_VERSION_CSV,0
@@ -37,16 +37,16 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
     BEGIN
-      VALUE "OriginalFilename", ZLIB_WINAPI_NAME ".dll"
+      VALUE "OriginalFilename", ZLIB_DLL_LIBNAME ".dll"
       VALUE "Comments",         "Zlib data compression library"
       VALUE "CompanyName",      "Zlib.net project"
       VALUE "FileDescription",  "Zlib data compression and zip file I/O library"
       VALUE "FileVersion",      ZLIB_VERSION_STR ZLIB_BUILD_VERSION
-      VALUE "InternalName",     ZLIB_WINAPI_NAME
+      VALUE "InternalName",     ZLIB_DLL_LIBNAME
       VALUE "LegalCopyright",   "(c) 1995-2017 Jean-loup Gailly & Mark Adler"
       VALUE "LegalTrademarks",  ""
-      VALUE "OriginalFilename", ZLIB_WINAPI_NAME ".dll"
-      VALUE "ProductName",      ZLIB_WINAPI_NAME " data compression and zip file I/O library"
+      VALUE "OriginalFilename", ZLIB_DLL_LIBNAME ".dll"
+      VALUE "ProductName",      ZLIB_DLL_LIBNAME " data compression and zip file I/O library"
       VALUE "ProductVersion",   ZLIB_VERSION_STR ZLIB_BUILD_VERSION
           
     END
