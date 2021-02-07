@@ -158,10 +158,8 @@ install:
 install : all
 !IF "$(TARGET)" == "dll"
 	@xcopy /I /Y /Q "$(WORKDIR)\*.dll" "$(INSTALLDIR)\bin"
-	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\bin"
-!ELSE
-	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\$(TARGET_LIB)"
 !ENDIF
+	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\bin"
 	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(INSTALLDIR)\$(TARGET_LIB)"
 	@xcopy /I /Y /Q "$(SRCDIR)\contrib\minizip\io*.h" "$(INSTALLDIR)\include"
 	@copy /Y "$(SRCDIR)\zconf.h" "$(INSTALLDIR)\include" >NUL
