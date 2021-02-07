@@ -163,11 +163,9 @@ install : all
 	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\$(TARGET_LIB)"
 !ENDIF
 	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(INSTALLDIR)\$(TARGET_LIB)"
-	@-md "$(INSTALLDIR)\include" >NUL
+	@xcopy /I /Y /Q "$(SRCDIR)\contrib\minizip\io*.h" "$(INSTALLDIR)\include"
 	@copy /Y "$(SRCDIR)\zconf.h" "$(INSTALLDIR)\include" >NUL
 	@copy /Y "$(SRCDIR)\zlib.h" "$(INSTALLDIR)\include" >NUL
-	@copy /Y "$(SRCDIR)\contrib\minizip\ioapi.h" "$(INSTALLDIR)\include" >NUL
-	@copy /Y "$(SRCDIR)\contrib\minizip\iowin32.h" "$(INSTALLDIR)\include" >NUL
 	@copy /Y "$(SRCDIR)\contrib\minizip\unzip.h" "$(INSTALLDIR)\include" >NUL
 	@copy /Y "$(SRCDIR)\contrib\minizip\zip.h" "$(INSTALLDIR)\include" >NUL
 !ENDIF
