@@ -72,17 +72,21 @@ ARFLAGS  = /nologo /SUBSYSTEM:CONSOLE /MACHINE:$(CPU) $(EXTRA_ARFLAGS)
 TARGET   = dll
 CFLAGS   = $(CFLAGS) -DZLIB_WINAPI
 PROJECT  = libzlibwapi-1
-LDFLAGS  = /nologo /INCREMENTAL:NO /OPT:REF /DEBUG /DLL /SUBSYSTEM:CONSOLE /MACHINE:$(CPU) $(EXTRA_LDFLAGS)
+LDFLAGS  = /nologo /INCREMENTAL:NO /OPT:REF /DLL /SUBSYSTEM:CONSOLE /MACHINE:$(CPU) $(EXTRA_LDFLAGS)
 !ENDIF
 
 WORKDIR  = $(CPU)-rel-$(TARGET)
 OUTPUT   = $(WORKDIR)\$(PROJECT).$(TARGET)
-PDBFLAGS = -Fo$(WORKDIR)\ -Fd$(WORKDIR)\$(PROJECT)
-CLOPTS   = /c /nologo $(CRT_CFLAGS) /wd4267 -W3 -O2 -Ob2 -Zi
+CLOPTS   = /c /nologo $(CRT_CFLAGS) /wd4267 -W3 -O2 -Ob2
 RFLAGS   = /l 0x409 /n /d NDEBUG /d WIN32 /d WINNT /d WINVER=$(WINVER)
 RFLAGS   = $(RFLAGS) /d _WIN32_WINNT=$(WINVER) $(EXTRA_RFLAGS)
 LDLIBS   = kernel32.lib $(EXTRA_LIBS)
-BUILDPDB = $(WORKDIR)\$(PROJECT).pdb
+!IF !DEFINED(_NO_PDB) || "$(_NO_PDB)" == ""
+PDBNAME  = -Fd$(WORKDIR)\$(PROJECT)
+OUTPDB   = /pdb:$(WORKDIR)\$(PROJECT).pdb
+CLOPTS   = $(CLOPTS) -Zi
+LDFLAGS  = $(LDFLAGS) /DEBUG
+!ENDIF
 
 OBJECTS = \
 	$(WORKDIR)\adler32.obj \
@@ -130,13 +134,13 @@ $(WORKDIR) :
 	@-md $(WORKDIR)
 
 {$(SRCDIR)}.c{$(WORKDIR)}.obj :
-	$(CC) $(CLOPTS) $(CFLAGS) $(PDBFLAGS) $<
+	$(CC) $(CLOPTS) $(CFLAGS) -Fo$(WORKDIR)\ $(PDBNAME) $<
 
 {$(SRCDIR)\contrib\minizip}.c{$(WORKDIR)}.obj :
-	$(CC) $(CLOPTS) $(CFLAGS) $(PDBFLAGS) $<
+	$(CC) $(CLOPTS) $(CFLAGS) -Fo$(WORKDIR)\ $(PDBNAME) $<
 
 {$(SRCDIR)\contrib\masmx64}.c{$(WORKDIR)}.obj :
-	$(CC) $(CLOPTS) $(CFLAGS) $(PDBFLAGS) $<
+	$(CC) $(CLOPTS) $(CFLAGS) -Fo$(WORKDIR)\ $(PDBNAME) $<
 
 {$(SRCDIR)\contrib\masmx64}.asm{$(WORKDIR)}.obj :
 	$(ML) $(AFLAGS) /Fo$@ $<
@@ -150,7 +154,7 @@ $(WORKDIR) :
 
 $(OUTPUT): $(WORKDIR) $(OBJECTS) $(ASM_OBJECTS)
 !IF "$(TARGET)" == "dll"
-	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) /def:$(SRCDIR)\zlibwapi.def /pdb:$(BUILDPDB) /out:$(OUTPUT)
+	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) /def:$(SRCDIR)\zlibwapi.def $(OUTPDB) /out:$(OUTPUT)
 !ELSE
 	$(AR) $(ARFLAGS) $(OBJECTS) $(ASM_OBJECTS) /out:$(OUTPUT)
 !ENDIF
@@ -166,7 +170,9 @@ install : all
 !IF "$(TARGET)" == "dll"
 	@xcopy /I /Y /Q "$(WORKDIR)\*.dll" "$(INSTALLDIR)\bin"
 !ENDIF
+!IF !DEFINED(_NO_PDB) || "$(_NO_PDB)" == ""
 	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\bin"
+!ENDIF
 	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(INSTALLDIR)\$(TARGET_LIB)"
 	@xcopy /I /Y /Q "$(SRCDIR)\contrib\minizip\io*.h" "$(INSTALLDIR)\include"
 	@copy /Y "$(SRCDIR)\zconf.h" "$(INSTALLDIR)\include" >NUL
