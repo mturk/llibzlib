@@ -81,7 +81,7 @@ CLOPTS   = /c /nologo $(CRT_CFLAGS) /wd4267 -W3 -O2 -Ob2
 RFLAGS   = /l 0x409 /n /d NDEBUG /d WIN32 /d WINNT /d WINVER=$(WINVER)
 RFLAGS   = $(RFLAGS) /d _WIN32_WINNT=$(WINVER) $(EXTRA_RFLAGS)
 LDLIBS   = kernel32.lib $(EXTRA_LIBS)
-!IF !DEFINED(_NO_PDB) || "$(_NO_PDB)" == ""
+!IF DEFINED(_PDB)
 PDBNAME  = -Fd$(WORKDIR)\$(PROJECT)
 OUTPDB   = /pdb:$(WORKDIR)\$(PROJECT).pdb
 CLOPTS   = $(CLOPTS) -Zi
@@ -170,7 +170,7 @@ install : all
 !IF "$(TARGET)" == "dll"
 	@xcopy /I /Y /Q "$(WORKDIR)\*.dll" "$(INSTALLDIR)\bin"
 !ENDIF
-!IF !DEFINED(_NO_PDB) || "$(_NO_PDB)" == ""
+!IF !DEFINED(_PDB)
 	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\bin"
 !ENDIF
 	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(INSTALLDIR)\$(TARGET_LIB)"
