@@ -13,16 +13,29 @@
  *
  */
 
-#include <winver.h>
+#include <windows.h>
 
-#define ZLIB_VERSION_CSV     1,2,11
-#define ZLIB_VERSION_STR    "1.2.11"
-#define ZLIB_BUILD_VERSION  "_1"
-#define ZLIB_DLL_LIBNAME    "libzlibwapi-1"
+#define CPP_TOSTR_HELPER(n)         #n
+#define CPP_TOSTR(n)                CPP_TOSTR_HELPER(n)
+
+#if defined(_VENDOR_NUM)
+# define ZLIB_VERSION_MICRO         _VENDOR_NUM
+#else
+# define ZLIB_VERSION_MICRO         0
+#endif
+#if defined(_VENDOR_SFX)
+# define ZLIB_VERSION_VENDOR        CPP_TOSTR(_VENDOR_SFX)
+#else
+# define ZLIB_VERSION_VENDOR        ""
+#endif
+
+#define ZLIB_VERSION_CSV            1,2,11, ZLIB_VERSION_MICRO
+#define ZLIB_VERSION_STR            "1.2.11" ZLIB_VERSION_VENDOR
+#define ZLIB_DLL_LIBNAME            "libzlibwapi-1"
 
 VS_VERSION_INFO VERSIONINFO
-  FILEVERSION     ZLIB_VERSION_CSV,0
-  PRODUCTVERSION  ZLIB_VERSION_CSV,0
+  FILEVERSION     ZLIB_VERSION_CSV
+  PRODUCTVERSION  ZLIB_VERSION_CSV
   FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
 #ifdef _DEBUG
  FILEFLAGS    0x1L      /* VS_FF_DEBUG */
@@ -41,14 +54,14 @@ BEGIN
       VALUE "Comments",         "Zlib data compression library"
       VALUE "CompanyName",      "Zlib.net project"
       VALUE "FileDescription",  "Zlib data compression and zip file I/O library"
-      VALUE "FileVersion",      ZLIB_VERSION_STR ZLIB_BUILD_VERSION
+      VALUE "FileVersion",      ZLIB_VERSION_STR
       VALUE "InternalName",     ZLIB_DLL_LIBNAME
       VALUE "LegalCopyright",   "(c) 1995-2017 Jean-loup Gailly & Mark Adler"
       VALUE "LegalTrademarks",  ""
       VALUE "OriginalFilename", ZLIB_DLL_LIBNAME ".dll"
       VALUE "ProductName",      ZLIB_DLL_LIBNAME " data compression and zip file I/O library"
-      VALUE "ProductVersion",   ZLIB_VERSION_STR ZLIB_BUILD_VERSION
-          
+      VALUE "ProductVersion",   ZLIB_VERSION_STR
+
     END
   END
   BLOCK "VarFileInfo"
