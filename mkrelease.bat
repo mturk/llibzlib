@@ -25,7 +25,7 @@ setlocal
 if "x%~1" == "x" goto Einval
 if "x%~2" == "x" goto Einval
 rem
-set "ProjectName=zlibwapi"
+set "ProjectName=llibzlib"
 set "ReleaseVersion=%~1"
 set "ReleaseArch=%~2"
 rem
