@@ -22,7 +22,7 @@ RC = rc.exe
 SRCDIR = .
 
 _CPU = x64
-_LIB = lib64
+_LIB = lib
 
 AFLAGS = /Zi /c
 !IF "$(_CPU)" == "x86"
