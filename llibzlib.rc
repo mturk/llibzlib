@@ -31,7 +31,7 @@
 
 #define ZLIB_VERSION_CSV            1,2,11, ZLIB_VERSION_MICRO
 #define ZLIB_VERSION_STR            "1.2.11" ZLIB_VERSION_VENDOR
-#define ZLIB_DLL_LIBNAME            "libzlibwapi-1"
+#define ZLIB_DLL_LIBNAME            "llibzlib-1"
 
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION     ZLIB_VERSION_CSV

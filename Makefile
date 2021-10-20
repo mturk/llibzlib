@@ -21,18 +21,11 @@ AR = lib.exe
 RC = rc.exe
 SRCDIR = .
 
-!IF !DEFINED(BUILD_CPU) || "$(BUILD_CPU)" == ""
-!IF DEFINED(VSCMD_ARG_TGT_ARCH)
-CPU = $(VSCMD_ARG_TGT_ARCH)
-!ELSE
-!ERROR Must specify BUILD_CPU matching compiler x86 or x64
-!ENDIF
-!ELSE
-CPU = $(BUILD_CPU)
-!ENDIF
+_CPU = x64
+_LIB = lib64
 
 AFLAGS = /Zi /c
-!IF "$(CPU)" == "x86"
+!IF "$(_CPU)" == "x86"
 ML = ml.exe
 AFLAGS = /coff $(AFLAGS)
 !ELSE
@@ -50,15 +43,8 @@ EXTRA_LIBS =
 CRT_CFLAGS = -MD
 !ENDIF
 
-!IF !DEFINED(TARGET_LIB) || "$(TARGET_LIB)" == ""
-TARGET_LIB = lib
-!ENDIF
-
 CFLAGS = $(CFLAGS) -I$(SRCDIR) -I$(SRCDIR)\contrib\minizip
 CFLAGS = $(CFLAGS) -DNDEBUG -DWIN32 -D_WIN32_WINNT=$(WINVER) -DWINVER=$(WINVER)
-!IF DEFINED(CMSC_VERSION)
-CFLAGS = $(CFLAGS) -D_CMSC_VERSION=$(CMSC_VERSION)
-!ENDIF
 !IF DEFINED(_ASM)
 CFLAGS = $(CFLAGS) -DASMV -DASMINF
 !ENDIF
@@ -66,13 +52,13 @@ CFLAGS = $(CFLAGS) -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE $(EXTR
 
 !IF DEFINED(_STATIC)
 TARGET   = lib
-PROJECT  = zlibwapi-1
-ARFLAGS  = /nologo /MACHINE:$(CPU) $(EXTRA_ARFLAGS)
+PROJECT  = zlib-1
+ARFLAGS  = /nologo /MACHINE:$(_CPU) $(EXTRA_ARFLAGS)
 !ELSE
 TARGET   = dll
 CFLAGS   = $(CFLAGS) -DZLIB_WINAPI
-PROJECT  = libzlibwapi-1
-LDFLAGS  = /nologo /INCREMENTAL:NO /OPT:REF /DLL /SUBSYSTEM:WINDOWS /MACHINE:$(CPU) $(EXTRA_LDFLAGS)
+PROJECT  = llibzlib-1
+LDFLAGS  = /nologo /INCREMENTAL:NO /OPT:REF /DLL /SUBSYSTEM:WINDOWS /MACHINE:$(_CPU) $(EXTRA_LDFLAGS)
 !ENDIF
 
 WORKDIR  = $(CPU)-rel-$(TARGET)
@@ -116,7 +102,7 @@ OBJECTS = \
 	$(WORKDIR)\zip.obj
 
 !IF "$(TARGET)" == "dll"
-OBJECTS = $(OBJECTS) $(WORKDIR)\zlibwapi.res
+OBJECTS = $(OBJECTS) $(WORKDIR)\llibzlib.res
 !ENDIF
 
 !IF DEFINED(_ASM)
@@ -160,31 +146,31 @@ $(WORKDIR) :
 
 $(OUTPUT): $(WORKDIR) $(OBJECTS) $(ASM_OBJECTS)
 !IF "$(TARGET)" == "dll"
-	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) /def:$(SRCDIR)\zlibwapi.def $(OUTPDB) /out:$(OUTPUT)
+	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) /def:$(SRCDIR)\llibzlib.def $(OUTPDB) /out:$(OUTPUT)
 !ELSE
 	$(AR) $(ARFLAGS) $(OBJECTS) $(ASM_OBJECTS) /out:$(OUTPUT)
 !ENDIF
 
-!IF !DEFINED(INSTALLDIR) || "$(INSTALLDIR)" == ""
+!IF !DEFINED(PREFIX) || "$(PREFIX)" == ""
 install:
-	@echo INSTALLDIR is not defined
-	@echo Use `nmake install INSTALLDIR=directory`
+	@echo PREFIX is not defined
+	@echo Use `nmake install PREFIX=directory`
 	@echo.
 	@exit /B 1
 !ELSE
 install : all
 !IF "$(TARGET)" == "dll"
-	@xcopy /I /Y /Q "$(WORKDIR)\*.dll" "$(INSTALLDIR)\bin"
+	@xcopy /I /Y /Q "$(WORKDIR)\*.dll" "$(PREFIX)\bin"
 !ENDIF
 !IF !DEFINED(_PDB)
-	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(INSTALLDIR)\bin"
+	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(PREFIX)\bin"
 !ENDIF
-	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(INSTALLDIR)\$(TARGET_LIB)"
-	@xcopy /I /Y /Q "$(SRCDIR)\contrib\minizip\io*.h" "$(INSTALLDIR)\include"
-	@copy /Y "$(SRCDIR)\zconf.h" "$(INSTALLDIR)\include" >NUL
-	@copy /Y "$(SRCDIR)\zlib.h" "$(INSTALLDIR)\include" >NUL
-	@copy /Y "$(SRCDIR)\contrib\minizip\unzip.h" "$(INSTALLDIR)\include" >NUL
-	@copy /Y "$(SRCDIR)\contrib\minizip\zip.h" "$(INSTALLDIR)\include" >NUL
+	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(PREFIX)\$(_LIB)"
+	@xcopy /I /Y /Q "$(SRCDIR)\contrib\minizip\io*.h" "$(PREFIX)\include"
+	@copy /Y "$(SRCDIR)\zconf.h" "$(PREFIX)\include" >NUL
+	@copy /Y "$(SRCDIR)\zlib.h" "$(PREFIX)\include" >NUL
+	@copy /Y "$(SRCDIR)\contrib\minizip\unzip.h" "$(PREFIX)\include" >NUL
+	@copy /Y "$(SRCDIR)\contrib\minizip\zip.h" "$(PREFIX)\include" >NUL
 !ENDIF
 
 clean:
