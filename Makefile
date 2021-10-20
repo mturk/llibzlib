@@ -61,7 +61,7 @@ PROJECT  = llibzlib-1
 LDFLAGS  = /nologo /INCREMENTAL:NO /OPT:REF /DLL /SUBSYSTEM:WINDOWS /MACHINE:$(_CPU) $(EXTRA_LDFLAGS)
 !ENDIF
 
-WORKDIR  = $(CPU)-rel-$(TARGET)
+WORKDIR  = $(_CPU)-rel-$(TARGET)
 OUTPUT   = $(WORKDIR)\$(PROJECT).$(TARGET)
 CLOPTS   = /c /nologo $(CRT_CFLAGS) /wd4267 -W3 -O2 -Ob2
 RFLAGS   = /l 0x409 /n /d NDEBUG /d WIN32 /d WINNT /d WINVER=$(WINVER)
@@ -106,7 +106,7 @@ OBJECTS = $(OBJECTS) $(WORKDIR)\llibzlib.res
 !ENDIF
 
 !IF DEFINED(_ASM)
-!IF "$(CPU)" == "x64"
+!IF "$(_CPU)" == "x64"
 ASM_OBJECTS = \
 	$(WORKDIR)\inffas8664.obj \
 	$(WORKDIR)\gvmat64.obj \
