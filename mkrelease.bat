@@ -17,7 +17,7 @@ rem
 rem --------------------------------------------------
 rem Release helper script
 rem
-rem Usage: mkrelease.bat version arch ["_ASM=1"] ["_STATIC_MSVCRT=1"]
+rem Usage: mkrelease.bat version arch ["_PDB=1"] ["_STATIC_MSVCRT=1"]
 rem    eg: mkrelease 1.2.11_1 x64
 rem        mkrelease 1.2.11_1 x64 "_STATIC_MSVCRT=1"
 rem
@@ -35,8 +35,8 @@ set "BuildDir=%cd%"
 popd
 rem
 rem Create builds
-nmake "PREFIX=%BuildDir%\dist\%ReleaseName%" %~3 %~4 %~5 _STATIC=1 install
-nmake "PREFIX=%BuildDir%\dist\%ReleaseName%" %~3 %~4 %~5 install
+nmake "PREFIX=%BuildDir%\dist\%ReleaseName%" %~3 %~4 %~5 _ASM=1 _STATIC=1 install
+nmake "PREFIX=%BuildDir%\dist\%ReleaseName%" %~3 %~4 %~5 _ASM=1 install
 rem
 rem Set path for ClamAV and 7za
 rem

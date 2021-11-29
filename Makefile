@@ -43,7 +43,7 @@ EXTRA_LIBS =
 CRT_CFLAGS = -MD
 !ENDIF
 
-CFLAGS = $(CFLAGS) -I$(SRCDIR) -I$(SRCDIR)\contrib\minizip
+CFLAGS = $(CFLAGS) -I$(SRCDIR)
 CFLAGS = $(CFLAGS) -DNDEBUG -DWIN32 -D_WIN32_WINNT=$(WINVER) -DWINVER=$(WINVER)
 !IF DEFINED(_ASM)
 CFLAGS = $(CFLAGS) -DASMV -DASMINF
@@ -53,19 +53,22 @@ CFLAGS = $(CFLAGS) -D_CMSC_VERSION=$(CMSC_VERSION)
 !ENDIF
 CFLAGS = $(CFLAGS) -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE $(EXTRA_CFLAGS)
 
+PROJECT  = zlib
 !IF DEFINED(_STATIC)
 TARGET   = lib
-PROJECT  = zlib-1
+PSUFFIX  = static
 ARFLAGS  = /nologo /MACHINE:$(_CPU) $(EXTRA_ARFLAGS)
+!UNDEF _PDB
 !ELSE
 TARGET   = dll
-CFLAGS   = $(CFLAGS) -DZLIB_WINAPI
-PROJECT  = llibzlib-1
+CFLAGS   = $(CFLAGS) -DZLIB_DLL
+PSUFFIX  = 1
 LDFLAGS  = /nologo /INCREMENTAL:NO /OPT:REF /DLL /SUBSYSTEM:WINDOWS /MACHINE:$(_CPU) $(EXTRA_LDFLAGS)
 !ENDIF
 
 WORKDIR  = $(_CPU)-rel-$(TARGET)
-OUTPUT   = $(WORKDIR)\$(PROJECT).$(TARGET)
+IMPLIB   = $(WORKDIR)\$(PROJECT).lib
+OUTPUT   = $(WORKDIR)\$(PROJECT)$(PSUFFIX).$(TARGET)
 CLOPTS   = /c /nologo $(CRT_CFLAGS) /wd4267 -W3 -O2 -Ob2
 RFLAGS   = /l 0x409 /n /d NDEBUG /d WIN32 /d WINNT /d WINVER=$(WINVER)
 RFLAGS   = $(RFLAGS) /d _WIN32_WINNT=$(WINVER) $(EXTRA_RFLAGS)
@@ -98,14 +101,10 @@ OBJECTS = \
 	$(WORKDIR)\inftrees.obj \
 	$(WORKDIR)\trees.obj \
 	$(WORKDIR)\uncompr.obj \
-	$(WORKDIR)\zutil.obj \
-	$(WORKDIR)\ioapi.obj \
-	$(WORKDIR)\iowin32.obj \
-	$(WORKDIR)\unzip.obj \
-	$(WORKDIR)\zip.obj
+	$(WORKDIR)\zutil.obj
 
 !IF "$(TARGET)" == "dll"
-OBJECTS = $(OBJECTS) $(WORKDIR)\llibzlib.res
+OBJECTS = $(OBJECTS) $(WORKDIR)\$(PROJECT)$(PSUFFIX).res
 !ENDIF
 
 !IF DEFINED(_ASM)
@@ -128,19 +127,16 @@ all : $(WORKDIR) $(OUTPUT)
 $(WORKDIR) :
 	@-md $(WORKDIR)
 
-{$(SRCDIR)}.c{$(WORKDIR)}.obj :
+{$(SRCDIR)}.c{$(WORKDIR)}.obj:
 	$(CC) $(CLOPTS) $(CFLAGS) -Fo$(WORKDIR)\ $(PDBNAME) $<
 
-{$(SRCDIR)\contrib\minizip}.c{$(WORKDIR)}.obj :
+{$(SRCDIR)\contrib\masmx64}.c{$(WORKDIR)}.obj:
 	$(CC) $(CLOPTS) $(CFLAGS) -Fo$(WORKDIR)\ $(PDBNAME) $<
 
-{$(SRCDIR)\contrib\masmx64}.c{$(WORKDIR)}.obj :
-	$(CC) $(CLOPTS) $(CFLAGS) -Fo$(WORKDIR)\ $(PDBNAME) $<
-
-{$(SRCDIR)\contrib\masmx64}.asm{$(WORKDIR)}.obj :
+{$(SRCDIR)\contrib\masmx64}.asm{$(WORKDIR)}.obj:
 	$(ML) $(AFLAGS) /Fo$@ $<
 
-{$(SRCDIR)\contrib\masmx86}.asm{$(WORKDIR)}.obj :
+{$(SRCDIR)\contrib\masmx86}.asm{$(WORKDIR)}.obj:
 	$(ML) $(AFLAGS) /Fo$@ $<
 
 
@@ -149,7 +145,7 @@ $(WORKDIR) :
 
 $(OUTPUT): $(WORKDIR) $(OBJECTS) $(ASM_OBJECTS)
 !IF "$(TARGET)" == "dll"
-	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) /def:$(SRCDIR)\llibzlib.def $(OUTPDB) /out:$(OUTPUT)
+	$(LN) $(LDFLAGS) $(OBJECTS) $(ASM_OBJECTS) $(LDLIBS) $(OUTPDB) /implib:$(IMPLIB) /out:$(OUTPUT)
 !ELSE
 	$(AR) $(ARFLAGS) $(OBJECTS) $(ASM_OBJECTS) /out:$(OUTPUT)
 !ENDIF
@@ -169,11 +165,8 @@ install : all
 	@xcopy /I /Y /Q "$(WORKDIR)\*.pdb" "$(PREFIX)\bin"
 !ENDIF
 	@xcopy /I /Y /Q "$(WORKDIR)\*.lib" "$(PREFIX)\$(_LIB)"
-	@xcopy /I /Y /Q "$(SRCDIR)\contrib\minizip\io*.h" "$(PREFIX)\include"
 	@copy /Y "$(SRCDIR)\zconf.h" "$(PREFIX)\include" >NUL
 	@copy /Y "$(SRCDIR)\zlib.h" "$(PREFIX)\include" >NUL
-	@copy /Y "$(SRCDIR)\contrib\minizip\unzip.h" "$(PREFIX)\include" >NUL
-	@copy /Y "$(SRCDIR)\contrib\minizip\zip.h" "$(PREFIX)\include" >NUL
 !ENDIF
 
 clean:
