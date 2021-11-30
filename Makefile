@@ -105,7 +105,7 @@ OBJECTS = \
 	$(WORKDIR)\zutil.obj
 
 !IF "$(TARGET)" == "dll"
-OBJECTS = $(OBJECTS) $(WORKDIR)\$(PROJECT)1.res
+OBJECTS = $(OBJECTS) $(WORKDIR)\llzlib.res
 !ENDIF
 
 !IF DEFINED(_ASM)
